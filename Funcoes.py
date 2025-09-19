@@ -17,7 +17,6 @@ import urllib.parse
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
-
 # Classe que define a conexão com o banco sql da américa energia
 class DatabaseConfig:
     
@@ -53,10 +52,8 @@ class DatabaseConfig:
 
 
 
-
 # Classe nova para inserir o status de coleta e de pagamento das faturas 
 class Banco: 
-    
 
     # Método para iniciar com a conexão do banco de dados do acces 
     def __init__(self, conn):
@@ -91,56 +88,15 @@ class Banco:
     # Método que insere o status de pagamento de cada fatura
     def inserir_pagamento(self, Tabela, UC, Cliente, Dist, Modalidade):
 
-        
-        
-
         # Extrai os dados de unidade consumidora, cliente, distribuidora e modalidade da tabela
         Tabela['UC']            = UC
         Tabela['Cliente']       = Cliente
         Tabela['Dist']          = Dist
         Tabela['Moalidade']     = Modalidade
- 
-
-        # Condição para CEB
-        if Dist == "CEB":
-            for _, row in Tabela.iterrows():
-                cursor = self.conn.cursor()
-                data_execucao = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                data_hoje = datetime.now().strftime('%Y-%m-%d')
-                data_hoje_dt = datetime.strptime(data_hoje, "%Y-%m-%d")
-                data_vencimento = datetime.strptime(row["Vencimento"], "%d/%m/%Y")
-    
-                if Modalidade == "BT":
-                    if "/" in row["Data Pagamento"]:
-                        status_pagamento = "Paga"
-                    elif (data_vencimento < data_hoje_dt) and ("/" not in row["Data Pagamento"]): 
-                        status_pagamento = "Vencida"
-                    else: 
-                        status_pagamento = "Em aberto"
-                    
-                    
-                    query_insert = "INSERT INTO tbl_pagamentos (uc_fatura, cliente_fatura, dist_fatura, data_referencia, data_vencimento, data_execucao, status_fatura) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    valores = (row["UC"], row["Cliente"], row["Dist"], "01/" + row["Fatura"], row["Vencimento"], data_execucao, status_pagamento)
-                    cursor.execute(query_insert, valores)
-                    self.conn.commit()
-                
-                elif Modalidade == "MT":
-                    if "/" in row["Pagamento"]:
-                        status_pagamento = "Paga"
-                    elif (data_vencimento < data_hoje_dt) and ("/" not in row["Pagamento"]): 
-                        status_pagamento = "Vencida"
-                    else: 
-                        status_pagamento = "Em aberto"
-                    
-                    query_insert = "INSERT INTO tbl_pagamentos (uc_fatura, cliente_fatura, dist_fatura, data_referencia, data_vencimento, data_execucao, status_fatura) VALUES (?, ?, ?, ?, ?, ?, ?)"
-                    valores = (row["UC"], row["Cliente"], row["Dist"], "01/" + row["Fatura"], row["Vencimento"], data_execucao, status_pagamento)
-                    cursor.execute(query_insert, valores)
-                    self.conn.commit()
-        
-        
+         
         
         # Condição para EQUATORIAL GO
-        elif Dist == "EQUATORIAL GO":
+        if Dist == "EQUATORIAL AL":
             
             for _, row in Tabela.iterrows():
                 cursor = self.conn.cursor()

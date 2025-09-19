@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 import urllib.parse
 
 # Lista de distribuidoras
-distribuidoras = ["EQUATORIAL GO"]
+distribuidoras = ["EQUATORIAL AL"]
 
 
 # Credenciais para conexão com o sql heidi
